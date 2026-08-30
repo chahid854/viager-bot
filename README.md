@@ -2,7 +2,7 @@
 
 Bot personnel qui surveille les annonces de **viager / lijfrente** sur les
 sources belges qui en publient vraiment, filtre sur Bruxelles + 20 km, mémorise
-ce qu'il a déjà vu, et envoie les nouveautés sur Telegram. Il tourne 3 fois par
+ce qu'il a déjà vu, et envoie les nouveautés sur Telegram. Il tourne 2 fois par
 jour sur GitHub Actions.
 
 41 sources sont déclarées, **12 sont actives** : les autres sont éteintes avec
@@ -195,7 +195,7 @@ postal. Le matching fonctionne donc des deux façons, avec ces précautions :
 
 ### Déduplication
 
-Le script tourne 3 fois par jour : la même annonce ne doit jamais arriver deux
+Le script tourne 2 fois par jour : la même annonce ne doit jamais arriver deux
 fois. Trois niveaux, dans cet ordre :
 
 1. `id_hash` = SHA256(source + identifiant natif), ou à défaut SHA256(URL
@@ -383,11 +383,11 @@ d'autre ne bouge.
 
 ### Horaires
 
-`veille.yml` tourne à **8h, 13h et 19h, heure de Bruxelles**. Le cron GitHub
-étant en UTC et ignorant l'heure d'été, le workflow se déclenche aux deux heures
-UTC possibles (6h/7h, 11h/12h, 17h/18h) et une première étape vérifie l'heure
-réelle à Bruxelles : si ce n'est pas 8h, 13h ou 19h, le job s'arrête en quelques
-secondes. Le changement d'heure est donc géré tout seul.
+`veille.yml` tourne à **13h et 19h, heure de Bruxelles**. Le cron GitHub étant
+en UTC et ignorant l'heure d'été, le workflow se déclenche aux deux heures UTC
+possibles (11h/12h et 17h/18h) et une première étape vérifie l'heure réelle à
+Bruxelles : si ce n'est ni 13h ni 19h, le job s'arrête en quelques secondes. Le
+changement d'heure est donc géré tout seul.
 
 `workflow_dispatch` permet un lancement manuel à tout moment, avec une case
 « dry run ».
@@ -416,10 +416,10 @@ par `actions/cache@v4` avec `path: seen.db` et une clé horodatée + `restore-ke
 
 | Workflow | Fréquence | Durée | Par mois |
 |---|---|---|---|
-| Veille | 3×/jour (6 déclenchements, 3 s'arrêtent aussitôt) | ~2 min (53 s de scraping + installation) | ~200 min |
-| Gardes qui s'arrêtent | 3×/jour | ~5 s | ~8 min |
+| Veille | 2×/jour (4 déclenchements, 2 s'arrêtent aussitôt) | ~2 min (53 s de scraping + installation) | ~130 min |
+| Gardes qui s'arrêtent | 2×/jour | ~5 s | ~5 min |
 | Commandes | toutes les 30 min | ~25 s | ~730 min |
-| **Total** | | | **~940 min** |
+| **Total** | | | **~865 min** |
 
 Le quota gratuit d'un dépôt **privé** est de 2 000 min/mois : on est dans les
 clous avec de la marge. Sur un dépôt **public**, les minutes Actions sont
@@ -429,7 +429,7 @@ GitHub, jamais par un fichier).
 
 Pour réduire : passe `commandes.yml` à `0 * * * *` (toutes les heures, ~360
 min/mois) ou supprime ce workflow — les commandes seront alors lues au début de
-chacune des trois veilles.
+chacune des deux veilles.
 
 Le run complet est borné à **240 secondes** de scraping (`BUDGET_SECONDES` dans
 `config.py`) : au-delà, la pagination s'arrête proprement et le run se termine

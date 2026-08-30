@@ -1,12 +1,11 @@
 name: Veille viager
 
-# 3 passages par jour en heure de Bruxelles (8h, 13h, 19h).
+# 2 passages par jour en heure de Bruxelles (13h et 19h).
 # Le cron GitHub est en UTC et ne connait pas l'heure d'ete : on declenche donc
 # aux deux heures UTC possibles et on laisse le job decider s'il doit tourner.
 on:
   schedule:
-    - cron: "0 6,7 * * *"    # 8h a Bruxelles (ete: 6h UTC / hiver: 7h UTC)
-    - cron: "0 11,12 * * *"  # 13h
+    - cron: "0 11,12 * * *"  # 13h a Bruxelles (ete: 11h UTC / hiver: 12h UTC)
     - cron: "0 17,18 * * *"  # 19h
   workflow_dispatch:
     inputs:
@@ -29,13 +28,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cette heure est-elle une des trois heures voulues ?
+      - name: Cette heure est-elle une des deux heures voulues ?
         id: garde
         run: |
           H=$(TZ=Europe/Brussels date +%H)
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "ok=true" >> $GITHUB_OUTPUT
-          elif [ "$H" = "08" ] || [ "$H" = "13" ] || [ "$H" = "19" ]; then
+          elif [ "$H" = "13" ] || [ "$H" = "19" ]; then
             echo "ok=true" >> $GITHUB_OUTPUT
           else
             echo "Il est ${H}h a Bruxelles, ce n'est pas une heure de passage."
