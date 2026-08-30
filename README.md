@@ -263,7 +263,7 @@ secondes**.
 | Source | Ce qu'elle rapporte |
 |---|---|
 | **immoweb** | 226 viagers en Belgique, et de loin la source la mieux renseignée : bouquet, rente, âge du crédirentier et PEB fournis en clair |
-| **viagerbel** | 120 biens, catalogue complet paginé |
+| **viagerbel** | catalogue de 274 fiches, mais **8 disponibles** seulement : le reste est leur vitrine de ventes passées |
 | **vente-en-viager** | 120 biens |
 | **leviager.be** | ~50 biens (les « vendu » sont écartés) |
 | **lijfrente-makelaar** | ~22 biens |
@@ -319,9 +319,24 @@ verkoop op termijn) et en EN (life annuity, bare ownership).
 
 ### Les biens déjà vendus
 
-Beaucoup d'agences gardent leurs ventes passées en ligne, en vitrine : sur
-viagerbel, 72 des 73 biens de la zone portent un badge « Vendu ». Ils sont donc
-écartés avant tout stockage.
+Beaucoup d'agences gardent leurs ventes passées en ligne, en vitrine : sur les
+274 fiches du catalogue viagerbel, 266 portent un badge « Vendu ». Elles sont
+écartées avant tout stockage.
+
+Deux pièges ont demandé un traitement particulier, et valent d'être connus si tu
+ajoutes une source :
+
+**Une annonce est souvent liée plusieurs fois dans une même page** — depuis sa
+carte, depuis sa photo, depuis un lien « Descriptif complet » — et ces liens
+n'ont pas le même bloc parent. Chez viagerbel, un seul de ces blocs porte le
+badge « Vendu ». Ne regarder que la première occurrence laissait donc passer
+tous les biens vendus. Le scraper regroupe maintenant toutes les occurrences
+d'une URL et considère le bien comme vendu si **l'une** d'elles le signale.
+
+**La pagination ne s'arrête pas sur une page sans résultat**, mais sur une page
+sans aucun lien d'annonce. Sinon, une page entièrement composée de biens vendus
+couperait l'exploration et laisserait les pages suivantes inexplorées — c'est
+exactement ce qui arrivait sur viagerbel dès la page 3.
 
 La détection ne regarde que le titre et les 60 premiers caractères de la carte,
 là où les sites posent leur badge. Chercher plus loin produisait deux faux

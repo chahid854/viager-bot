@@ -234,7 +234,12 @@ def _localisation(conteneur):
     return m.group(0)[:120] if m else ""
 
 
-def depuis_cartes(soup, url_page, source, pages_liste=None):
+def depuis_cartes(soup, url_page, source, pages_liste=None, infos=None):
+    """`infos` recoit le compte de liens candidats et d'annonces vendues.
+
+    C'est ce qui permet de distinguer une page reellement vide (fin de la
+    pagination) d'une page pleine dont tout a ete filtre.
+    """
     annonces, vus = [], set()
     tout_viager = source.get("tout_viager", source.get("kind") == "agence")
     # certains sites nomment leurs fiches autrement (slug aleatoire, id maison) :
@@ -248,6 +253,12 @@ def depuis_cartes(soup, url_page, source, pages_liste=None):
         exclues.add(u.split("?")[0].rstrip("/"))
         exclues.add(re.sub(r"/page/\d+/?$", "", u.split("?")[0]).rstrip("/"))
 
+    # Une meme annonce est souvent liee plusieurs fois dans la page : depuis sa
+    # carte, depuis sa photo, depuis un "Descriptif complet"... Ces liens n'ont
+    # pas le meme bloc parent, et un seul d'entre eux porte le badge "Vendu".
+    # On regroupe donc toutes les occurrences d'une URL avant de decider.
+    groupes = {}
+    ordre = []
     for lien in soup.find_all("a", href=True):
         href = lien["href"].strip()
         if not href or LIEN_EXCLU.search(href):
@@ -258,12 +269,37 @@ def depuis_cartes(soup, url_page, source, pages_liste=None):
         elif not (LIEN_DETAIL.search(href) or LIEN_NUMERIQUE.search(href)):
             continue
         url = base.absolu(url_page, href)
-        if url in vus or url.split("?")[0].rstrip("/") in exclues:
+        if url.split("?")[0].rstrip("/") in exclues:
+            continue
+        if url not in groupes:
+            groupes[url] = []
+            ordre.append(url)
+        if len(groupes[url]) < 4:
+            groupes[url].append(lien)
+
+    if infos is not None:
+        infos["candidats"] = len(ordre)
+        infos["vendus"] = 0
+
+    for url in ordre:
+        blocs = []
+        for lien in groupes[url]:
+            conteneur = _conteneur(lien)
+            blocs.append((conteneur, base.texte(conteneur, 1500),
+                          _titre(conteneur, lien, url)))
+
+        # le bloc le plus riche sert de description, mais le statut "vendu" est
+        # teste sur chacun : il suffit qu'une seule occurrence le signale
+        if any(parsing.est_vendu(t, txt) for _, txt, t in blocs):
+            if infos is not None:
+                infos["vendus"] += 1
             continue
 
-        conteneur = _conteneur(lien)
-        txt = base.texte(conteneur, 1500)
-        titre = _titre(conteneur, lien, url)
+        conteneur, txt, titre = max(blocs, key=lambda b: len(b[1]))
+        for _, _, t in blocs:                       # un vrai libelle plutot que
+            if t and not GENERIQUE.match(t.strip()) and 12 < len(t.strip()) <= 90:
+                titre = t                           # "Descriptif complet"
+                break
         if not titre or len(txt) < 25:
             continue
         # Le mot-cle se cherche dans le CHEMIN de l'url, jamais dans sa query :
@@ -272,8 +308,6 @@ def depuis_cartes(soup, url_page, source, pages_liste=None):
         chemin = url.split("?")[0]
         if not tout_viager and not parsing.contient_mot_cle_viager(
                 " ".join([titre, txt, chemin]), config.MOTS_CLES):
-            continue
-        if parsing.est_vendu(titre, txt):
             continue
 
         vus.add(url)
@@ -304,9 +338,12 @@ def fetch(source, ctx=None):
             log.warning("[%s] %s : %s", source["name"], url, e)
             continue
 
+        infos = {"candidats": 0, "vendus": 0}
         lot = depuis_jsonld(soup, url, source)
         if len(lot) < 2:
-            lot = depuis_cartes(soup, url, source, liste_pages) or lot
+            lot = depuis_cartes(soup, url, source, liste_pages, infos) or lot
+        else:
+            infos["candidats"] = len(lot)
 
         nouveaux = 0
         for a in lot:
@@ -315,13 +352,15 @@ def fetch(source, ctx=None):
             vus.add(a.url)
             resultats.append(a)
             nouveaux += 1
-        log.info("[%s] %s -> %d annonces", source["name"], url, nouveaux)
+        log.info("[%s] %s -> %d annonces (%d liens, %d vendus ecartes)",
+                 source["name"], url, nouveaux, infos["candidats"], infos["vendus"])
 
-        # Pagination : une page qui n'apporte rien signifie qu'on est au bout.
-        # Attention, la page 1 est souvent identique a la racine deja lue : on
-        # ne s'arrete donc qu'a partir de la page 2.
+        # Pagination : on s'arrete quand la page ne contient PLUS AUCUN lien
+        # d'annonce. Se fier au nombre d'annonces retenues couperait la
+        # pagination des qu'une page entiere est filtree (que des biens vendus,
+        # par exemple), en laissant les pages suivantes inexplorees.
         m = re.search(r"(?:page[=/]|/page/)(\d+)", url)
-        if nouveaux == 0 and m and int(m.group(1)) >= 2:
+        if infos["candidats"] == 0 and m and int(m.group(1)) >= 2:
             break
         if len(resultats) >= MAX_PAR_SOURCE:
             break
