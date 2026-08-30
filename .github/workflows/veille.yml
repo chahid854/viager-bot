@@ -1,14 +1,23 @@
 name: Veille viager
 
-# 2 passages par jour en heure de Bruxelles (13h et 19h).
-# Le cron GitHub est en UTC et ne connait pas l'heure d'ete : on declenche donc
-# aux deux heures UTC possibles et on laisse le job decider s'il doit tourner.
+# Objectif : ~2 passages par jour, autour de 13h et 19h heure de Bruxelles.
+#
+# L'ordonnanceur GitHub livre ses taches planifiees avec 0 a 4 heures de
+# retard, parfois pas du tout. Plutot que d'exiger l'heure pile (ce qui
+# revenait a refuser des livraisons parfaitement utilisables), on accepte
+# toute livraison entre 11h et 22h et on laisse --min-interval garantir
+# qu'un seul passage reel a lieu par demi-journee. Un declenchement en
+# retard fait donc quand meme le travail — juste un peu plus tard.
+#
+# Les taches planifiees du PC (13h05/19h05, si le PC est allume) passent
+# par workflow_dispatch avec auto=true et suivent la meme regle : premier
+# arrive, seul servi.
 on:
   schedule:
-    # Jamais a l'heure pile : c'est le creneau le plus encombre chez GitHub,
-    # celui ou les taches planifiees sont le plus souvent retardees ou perdues.
-    - cron: "5 11,12 * * *"  # 13h a Bruxelles (ete: 11h UTC / hiver: 12h UTC)
-    - cron: "5 17,18 * * *"  # 19h
+    # Deux heures UTC par cible pour couvrir l'heure d'ete/hiver ; jamais
+    # l'heure pile, le creneau le plus encombre chez GitHub.
+    - cron: "5 11,12 * * *"  # cible 13h a Bruxelles
+    - cron: "5 17,18 * * *"  # cible 19h
   workflow_dispatch:
     inputs:
       dry_run:
@@ -34,19 +43,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Fenetre de deux heures, pas une heure pile : GitHub livre regulierement
-      # ses taches planifiees avec du retard. Le doublon eventuel est ecarte
-      # plus loin par --min-interval, cote Python.
-      - name: Sommes-nous dans un creneau de passage ?
+      # Seule restriction restante : pas de notifications en pleine nuit si
+      # une livraison arrive vraiment tres en retard. Le tri fin (un seul
+      # passage par demi-journee) est fait par --min-interval, cote Python.
+      - name: Heure decente ?
         id: garde
         run: |
-          H=$(TZ=Europe/Brussels date +%H)
+          H=$(TZ=Europe/Brussels date +%-H)
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "ok=true" >> $GITHUB_OUTPUT
-          elif [ "$H" = "13" ] || [ "$H" = "14" ] || [ "$H" = "19" ] || [ "$H" = "20" ]; then
+          elif [ "$H" -ge 11 ] && [ "$H" -le 22 ]; then
             echo "ok=true" >> $GITHUB_OUTPUT
           else
-            echo "Il est ${H}h a Bruxelles, hors creneau."
+            echo "Il est ${H}h a Bruxelles : trop tard, on laisse dormir."
             echo "ok=false" >> $GITHUB_OUTPUT
           fi
 
@@ -66,13 +75,14 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          # Un declenchement manuel force le passage ; un declenchement
-          # automatique (cron GitHub ou tache planifiee du PC via auto=true)
-          # respecte --min-interval pour qu'un seul passage ait lieu par creneau.
+          # Un declenchement manuel force le passage ; tout declenchement
+          # automatique (cron GitHub ou tache du PC via auto=true) respecte
+          # --min-interval : le premier arrive fait le travail, les suivants
+          # repartent en quelques secondes.
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.auto }}" != "true" ]; then
             python main.py ${{ inputs.dry_run && '--dry-run' || '' }}
           else
-            python main.py --min-interval 5
+            python main.py --min-interval 4
           fi
 
       - name: Sauvegarder la base

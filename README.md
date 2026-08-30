@@ -407,13 +407,15 @@ Bruxelles. Le changement d'heure est donc géré tout seul.
 C'est documenté et sans recours : la file est partagée, et les dépôts privés sur
 compte gratuit passent après les autres. Trois précautions en tiennent compte :
 
-- les crons ne sont **jamais à l'heure pile ni à la demie** (`5 11,12`, `13,43`),
-  les créneaux les plus encombrés ;
-- la fenêtre d'acceptation fait **deux heures** (13h-14h, 19h-20h) et non une,
-  pour qu'un déclenchement en retard fasse quand même son travail ;
-- `--min-interval 5` refuse de rescraper si la veille précédente date de moins
-  de 5 heures. C'est lui qui garantit un seul passage réel par créneau, quel que
-  soit celui des deux déclenchements qui arrive en premier.
+- les crons ne sont **jamais à l'heure pile ni à la demie** (`5 11,12`,
+  `23 * * * *`), les créneaux les plus encombrés ;
+- **aucune exigence d'heure exacte** : toute livraison entre 11h et 22h est
+  acceptée. En pratique GitHub livre avec 0 à 4 h de retard — exiger l'heure
+  pile revenait à jeter des déclenchements parfaitement utilisables ;
+- `--min-interval 4` refuse de rescraper si la veille précédente date de moins
+  de 4 heures. C'est lui qui garantit un seul passage réel par demi-journée,
+  quel que soit le déclenchement (cron GitHub ou tâche du PC) qui arrive en
+  premier.
 
 Si une exécution saute malgré tout, la suivante rattrape : rien n'est perdu, les
 annonces manquées sont simplement notifiées plus tard. Et `Actions` →
@@ -437,6 +439,12 @@ un seul passage réel par créneau. Si le PC est éteint à l'heure dite, la tâ
 part à l'allumage suivant (« exécuter dès que possible après un démarrage
 manqué »). La seule vraie condition est que `gh` soit connecté sur ce PC
 (`gh auth status`).
+
+**Le PC n'est pas nécessaire** : les crons GitHub, acceptés même en retard,
+suffisent à faire les ~2 passages par jour. Les tâches Windows ne servent qu'à
+la ponctualité — quand le PC est allumé à 13h05/19h05, le passage part à la
+minute ; sinon il part quand GitHub livre son cron, entre l'heure cible et
+quelques heures plus tard.
 
 Pour les retirer : `Unregister-ScheduledTask -TaskName "Viager - veille"` et
 idem pour `"Viager - commandes"`.
