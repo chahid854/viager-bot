@@ -401,8 +401,27 @@ d'autre ne bouge.
 `veille.yml` tourne à **13h et 19h, heure de Bruxelles**. Le cron GitHub étant
 en UTC et ignorant l'heure d'été, le workflow se déclenche aux deux heures UTC
 possibles (11h/12h et 17h/18h) et une première étape vérifie l'heure réelle à
-Bruxelles : si ce n'est ni 13h ni 19h, le job s'arrête en quelques secondes. Le
-changement d'heure est donc géré tout seul.
+Bruxelles. Le changement d'heure est donc géré tout seul.
+
+**Les tâches planifiées de GitHub arrivent en retard, et parfois pas du tout.**
+C'est documenté et sans recours : la file est partagée, et les dépôts privés sur
+compte gratuit passent après les autres. Trois précautions en tiennent compte :
+
+- les crons ne sont **jamais à l'heure pile ni à la demie** (`5 11,12`, `13,43`),
+  les créneaux les plus encombrés ;
+- la fenêtre d'acceptation fait **deux heures** (13h-14h, 19h-20h) et non une,
+  pour qu'un déclenchement en retard fasse quand même son travail ;
+- `--min-interval 5` refuse de rescraper si la veille précédente date de moins
+  de 5 heures. C'est lui qui garantit un seul passage réel par créneau, quel que
+  soit celui des deux déclenchements qui arrive en premier.
+
+Si une exécution saute malgré tout, la suivante rattrape : rien n'est perdu, les
+annonces manquées sont simplement notifiées plus tard. Et `Actions` →
+`Veille viager` → `Run workflow` force un passage immédiat à tout moment.
+
+Un dépôt **public** est nettement mieux servi par l'ordonnanceur, en plus d'avoir
+des minutes illimitées. Le code ne contient aucun secret ; le seul frein est que
+`seen.db`, donc ton historique de recherche, deviendrait visible.
 
 `workflow_dispatch` permet un lancement manuel à tout moment, avec une case
 « dry run ».

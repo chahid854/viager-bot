@@ -8,7 +8,10 @@ name: Commandes Telegram
 # ce fichier : les commandes seront alors traitees au debut de chaque veille.
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    # Deux fois par heure, mais jamais a l'heure pile ni a la demie : GitHub
+    # deprioritise fortement les taches planifiees a ces minutes-la sur un
+    # depot prive, au point de les sauter completement.
+    - cron: "13,43 * * * *"
   workflow_dispatch:
 
 concurrency:

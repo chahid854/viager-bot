@@ -307,6 +307,26 @@ def executer(args):
         bdd.close()
         return 0
 
+    # Garde-fou anti-doublon de passage. Les taches planifiees de GitHub
+    # arrivent en retard, parfois de plus d'une heure, et le workflow declenche
+    # volontairement deux heures UTC pour couvrir l'heure d'ete. Plutot que de
+    # se fier a l'heure exacte, on refuse simplement de rescraper si la derniere
+    # veille est trop recente : le premier des deux declenchements fait le
+    # travail, le second repart aussitot.
+    if args.min_interval:
+        precedent = bdd.get_meta("dernier_run")
+        if precedent:
+            try:
+                ecoule = (datetime.now(timezone.utc)
+                          - datetime.fromisoformat(precedent)).total_seconds() / 3600.0
+                if ecoule < args.min_interval:
+                    log.info("derniere veille il y a %.1f h (< %.1f h) : on ne rescrape pas",
+                             ecoule, args.min_interval)
+                    bdd.close()
+                    return 0
+            except Exception:
+                pass
+
     f = bdd.filtres()
     zone = commandes.zone_active(bdd)
     ctx = Contexte(zone)
@@ -407,6 +427,9 @@ def main():
     p.add_argument("--purge-vendus", action="store_true",
                    help="retire de la base les biens deja vendus, puis quitte")
     p.add_argument("--source", metavar="NOM", help="ne scrape qu'une seule source (debug)")
+    p.add_argument("--min-interval", type=float, metavar="HEURES",
+                   help="ne rien rescraper si la derniere veille date de moins "
+                        "de N heures (absorbe les retards du cron GitHub)")
     p.add_argument("--commands-only", action="store_true",
                    help="traite seulement les commandes Telegram, sans scraper")
     p.add_argument("--no-telegram", action="store_true", help="scrape sans rien envoyer")

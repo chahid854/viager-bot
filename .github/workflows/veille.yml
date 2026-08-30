@@ -5,8 +5,10 @@ name: Veille viager
 # aux deux heures UTC possibles et on laisse le job decider s'il doit tourner.
 on:
   schedule:
-    - cron: "0 11,12 * * *"  # 13h a Bruxelles (ete: 11h UTC / hiver: 12h UTC)
-    - cron: "0 17,18 * * *"  # 19h
+    # Jamais a l'heure pile : c'est le creneau le plus encombre chez GitHub,
+    # celui ou les taches planifiees sont le plus souvent retardees ou perdues.
+    - cron: "5 11,12 * * *"  # 13h a Bruxelles (ete: 11h UTC / hiver: 12h UTC)
+    - cron: "5 17,18 * * *"  # 19h
   workflow_dispatch:
     inputs:
       dry_run:
@@ -28,16 +30,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cette heure est-elle une des deux heures voulues ?
+      # Fenetre de deux heures, pas une heure pile : GitHub livre regulierement
+      # ses taches planifiees avec du retard. Le doublon eventuel est ecarte
+      # plus loin par --min-interval, cote Python.
+      - name: Sommes-nous dans un creneau de passage ?
         id: garde
         run: |
           H=$(TZ=Europe/Brussels date +%H)
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "ok=true" >> $GITHUB_OUTPUT
-          elif [ "$H" = "13" ] || [ "$H" = "19" ]; then
+          elif [ "$H" = "13" ] || [ "$H" = "14" ] || [ "$H" = "19" ] || [ "$H" = "20" ]; then
             echo "ok=true" >> $GITHUB_OUTPUT
           else
-            echo "Il est ${H}h a Bruxelles, ce n'est pas une heure de passage."
+            echo "Il est ${H}h a Bruxelles, hors creneau."
             echo "ok=false" >> $GITHUB_OUTPUT
           fi
 
@@ -57,7 +62,11 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          python main.py ${{ inputs.dry_run && '--dry-run' || '' }}
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python main.py ${{ inputs.dry_run && '--dry-run' || '' }}
+          else
+            python main.py --min-interval 5
+          fi
 
       - name: Sauvegarder la base
         if: steps.garde.outputs.ok == 'true' && !inputs.dry_run
