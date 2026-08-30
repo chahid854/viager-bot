@@ -15,6 +15,10 @@ on:
         description: "Test sans envoi ni ecriture"
         type: boolean
         default: false
+      auto:
+        description: "Declenchement automatique (respecte --min-interval)"
+        type: boolean
+        default: false
 
 concurrency:
   group: viager-db          # jamais deux runs qui ecrivent seen.db en meme temps
@@ -62,7 +66,10 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          # Un declenchement manuel force le passage ; un declenchement
+          # automatique (cron GitHub ou tache planifiee du PC via auto=true)
+          # respecte --min-interval pour qu'un seul passage ait lieu par creneau.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.auto }}" != "true" ]; then
             python main.py ${{ inputs.dry_run && '--dry-run' || '' }}
           else
             python main.py --min-interval 5
