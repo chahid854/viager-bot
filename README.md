@@ -419,6 +419,28 @@ Si une exécution saute malgré tout, la suivante rattrape : rien n'est perdu, l
 annonces manquées sont simplement notifiées plus tard. Et `Actions` →
 `Veille viager` → `Run workflow` force un passage immédiat à tout moment.
 
+### Deuxième réveil : une tâche planifiée sur ton PC
+
+En pratique, l'ordonnanceur GitHub s'est révélé trop peu fiable (une seule
+exécution planifiée sur une journée entière, dépôt public ou non). Le
+scraping reste donc sur GitHub, avec sa base, mais c'est **ton PC qui sonne le
+réveil** : deux tâches du Planificateur de tâches Windows lancent
+`gh workflow run` (sans fenêtre, via `%LOCALAPPDATA%iager-bot\declencheur.vbs`).
+
+| Tâche | Quand | Déclenche |
+|---|---|---|
+| `Viager - veille` | 13h05 et 19h05 | `veille.yml` avec `auto=true` |
+| `Viager - commandes` | toutes les heures à :25 | `commandes.yml` |
+
+Les deux réveils (cron GitHub et PC) peuvent sonner : `--min-interval 5` garantit
+un seul passage réel par créneau. Si le PC est éteint à l'heure dite, la tâche
+part à l'allumage suivant (« exécuter dès que possible après un démarrage
+manqué »). La seule vraie condition est que `gh` soit connecté sur ce PC
+(`gh auth status`).
+
+Pour les retirer : `Unregister-ScheduledTask -TaskName "Viager - veille"` et
+idem pour `"Viager - commandes"`.
+
 Un dépôt **public** est nettement mieux servi par l'ordonnanceur, en plus d'avoir
 des minutes illimitées. Le code ne contient aucun secret ; le seul frein est que
 `seen.db`, donc ton historique de recherche, deviendrait visible.
