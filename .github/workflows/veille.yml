@@ -1,0 +1,78 @@
+name: Veille viager
+
+# 3 passages par jour en heure de Bruxelles (8h, 13h, 19h).
+# Le cron GitHub est en UTC et ne connait pas l'heure d'ete : on declenche donc
+# aux deux heures UTC possibles et on laisse le job decider s'il doit tourner.
+on:
+  schedule:
+    - cron: "0 6,7 * * *"    # 8h a Bruxelles (ete: 6h UTC / hiver: 7h UTC)
+    - cron: "0 11,12 * * *"  # 13h
+    - cron: "0 17,18 * * *"  # 19h
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Test sans envoi ni ecriture"
+        type: boolean
+        default: false
+
+concurrency:
+  group: viager-db          # jamais deux runs qui ecrivent seen.db en meme temps
+  cancel-in-progress: false
+
+permissions:
+  contents: write           # pour committer seen.db
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cette heure est-elle une des trois heures voulues ?
+        id: garde
+        run: |
+          H=$(TZ=Europe/Brussels date +%H)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "ok=true" >> $GITHUB_OUTPUT
+          elif [ "$H" = "08" ] || [ "$H" = "13" ] || [ "$H" = "19" ]; then
+            echo "ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "Il est ${H}h a Bruxelles, ce n'est pas une heure de passage."
+            echo "ok=false" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.garde.outputs.ok == 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer les dependances
+        if: steps.garde.outputs.ok == 'true'
+        run: pip install -r requirements.txt
+
+      - name: Lancer la veille
+        if: steps.garde.outputs.ok == 'true'
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python main.py ${{ inputs.dry_run && '--dry-run' || '' }}
+
+      - name: Sauvegarder la base
+        if: steps.garde.outputs.ok == 'true' && !inputs.dry_run
+        run: |
+          git config user.name  "viager-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -f seen.db agences_decouvertes.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Rien de neuf a sauvegarder."
+          else
+            git commit -m "veille: maj base $(TZ=Europe/Brussels date '+%Y-%m-%d %H:%M')"
+            for i in 1 2 3; do
+              git pull --rebase --autostash && git push && break
+              echo "Nouvelle tentative de push ($i)..."
+              sleep 5
+            done
+          fi

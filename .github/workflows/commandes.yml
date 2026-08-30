@@ -1,0 +1,50 @@
+name: Commandes Telegram
+
+# Sans ce workflow, une commande envoyee a 9h ne serait lue qu'a 13h.
+# Ici on releve les messages toutes les 30 minutes : un run dure ~20 secondes
+# et ne scrape rien.
+#
+# Si tu trouves ca trop bavard en minutes Actions, passe a "*/60" ou supprime
+# ce fichier : les commandes seront alors traitees au debut de chaque veille.
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: viager-db
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  commandes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Lire et executer les commandes
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py --commands-only
+      - name: Sauvegarder la base
+        run: |
+          git config user.name  "viager-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -f seen.db 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Aucune commande recue."
+          else
+            git commit -m "commandes: maj filtres/offset"
+            for i in 1 2 3; do
+              git pull --rebase --autostash && git push && break
+              sleep 5
+            done
+          fi
