@@ -1,17 +1,16 @@
 name: Commandes Telegram
 
 # Sans ce workflow, une commande envoyee a 9h ne serait lue qu'a 13h.
-# Ici on releve les messages toutes les 30 minutes : un run dure ~20 secondes
-# et ne scrape rien.
-#
-# Si tu trouves ca trop bavard en minutes Actions, passe a "*/60" ou supprime
-# ce fichier : les commandes seront alors traitees au debut de chaque veille.
+# Ici on releve les messages une fois par heure : un run dure ~20 secondes et
+# ne scrape rien. Compte donc jusqu'a une heure entre ta commande et sa
+# reponse, ou force le relevé depuis l'onglet Actions.
 on:
   schedule:
-    # Deux fois par heure, mais jamais a l'heure pile ni a la demie : GitHub
-    # deprioritise fortement les taches planifiees a ces minutes-la sur un
-    # depot prive, au point de les sauter completement.
-    - cron: "13,43 * * * *"
+    # Une seule fois par heure. GitHub documente que plus l'intervalle d'une
+    # tache planifiee est court, plus elle risque d'etre purement abandonnee ;
+    # toutes les 30 minutes, la quasi-totalite des creneaux etait sautee.
+    # La minute 23 evite les debuts d'heure, les plus encombres.
+    - cron: "23 * * * *"
   workflow_dispatch:
 
 concurrency:
