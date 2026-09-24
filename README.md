@@ -368,6 +368,26 @@ formulaires de recherche avec le nom de leurs champs, puis liste les pages
 internes en comptant combien de liens d'annonces chacune contient. La ligne
 marquée `<<< CANDIDAT` donne l'URL à mettre dans `config.py`.
 
+### Le circuit notarial
+
+Les biens vendus **par notaire** (gré à gré, successions) ne passent par aucune
+agence : leur seule vitrine est le réseau notarial. Cinq guetteurs le couvrent :
+
+- **notaire.be** — le portail national officiel (Fednot), interrogé avec son
+  filtre « Vente en viager » caché (`sale_type_accurate=A`). C'est la source
+  principale : les études individuelles y versent leurs annonces, y compris
+  le Notarishuis de Louvain qui n'a pas de vitrine propre.
+- **NVN** (Bruxelles), **MNBW** (Brabant wallon), **Maison du notariat du
+  Hainaut**, **Notarishuis Antwerpen** — les vitrines provinciales, une page
+  chacune, triées par mot-clé viager/lijfrente. Namur existe aussi mais est
+  hors zone.
+- **Biddit** (enchères notariales) n'est pas suivi : on n'y vend pas en viager.
+
+Le viager notarial publié est rare (une quinzaine dans tout le pays un jour
+donné) mais exclusif : quand il apparaît dans la zone, il n'est nulle part
+ailleurs. Les doublons éventuels avec le portail national sont fusionnés par
+la déduplication comme n'importe quelle autre paire de sources.
+
 ### Découverte automatique d'agences
 
 Quand une annonce viager sur Immoweb ou Immovlan est publiée par une agence dont

@@ -485,10 +485,18 @@ SOURCES = [
     {"name": "notaire.be", "module": "generic", "enabled": True, "kind": "agence",
      "urls": ["https://immo.notaire.be/fr/biens-a-vendre?sale_type_accurate=A&page={page}"],
      "pages": 3, "lien_re": r"/a-vendre/.+/\d+"},
-    # NVN = vitrine immobiliere des notaires bruxellois. Pas de filtre viager :
-    # on garde le tri par mot-cle (tout_viager=False via kind portail).
+    # Vitrines des "maisons des notaires" provinciales. Pas de filtre viager :
+    # tri par mot-cle (tout_viager=False via kind portail). Leuven n'a pas de
+    # vitrine propre : son Notarishuis renvoie vers immo.notaire.be, deja
+    # couvert ci-dessus. Namur est hors zone.
     {"name": "nvn", "module": "generic", "enabled": True, "kind": "portail",
-     "urls": ["https://nvn.be/immobilier"]},
+     "urls": ["https://nvn.be/immobilier"]},                       # Bruxelles
+    {"name": "notaires-bw", "module": "generic", "enabled": True, "kind": "portail",
+     "urls": ["https://mnbw.be/immobilier"]},                      # Brabant wallon
+    {"name": "notaires-hainaut", "module": "generic", "enabled": True, "kind": "portail",
+     "urls": ["https://maisondunotariatduhainaut.be/immobilier"]}, # Enghien, Braine...
+    {"name": "notarishuis-antwerpen", "module": "generic", "enabled": True, "kind": "portail",
+     "urls": ["https://www.notarishuis.eu/nl/te-koop/?page={page}"], "pages": 2},  # Malines, Rupel
 
     # -------------------------------------- D. agences viager (FR) ----------
     {"name": "viagerbel", "module": "generic", "enabled": True, "kind": "agence",
