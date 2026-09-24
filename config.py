@@ -121,8 +121,6 @@ COMMUNES = {
     "3090": ["Overijse"],
 
     # --- Deuxieme couronne : communes entre 15 et 20 km de la Grand-Place ---
-    # Distances calculees depuis COORDS ; Tubize (1480) est a 20,4 km, donc
-    # juste dehors — ajoute-le ici si tu veux elargir un peu plus.
     # Brabant wallon (francophone) :
     "1310": ["La Hulpe", "Terhulpen"],
     "1330": ["Rixensart"],
@@ -161,6 +159,109 @@ COMMUNES = {
     "1982": ["Elewijt", "Weerde"],              # Zemst
     "3071": ["Erps-Kwerps"],                    # Kortenberg
     "3078": ["Everberg", "Meerbeek"],           # Kortenberg
+
+    # --- Troisieme couronne : 20 a 35 km de la Grand-Place (demande du 24/09) ---
+    "2811": ["Hombeek", "Leest"],   # section de 2800
+    "9470": ["Denderleeuw"],
+    "1480": ["Tubize", "Tubeke", "Clabecq", "Oisquercq", "Saintes"],
+    "9472": ["Iddergem"],   # section de 9470
+    "1461": ["Haut-Ittre"],   # section de 1460
+    "2812": ["Muizen"],   # section de 2800
+    "3191": ["Hever"],   # section de 3190
+    "3190": ["Boortmeerbeek"],
+    "3051": ["Sint-Joris-Weert"],   # section de 3050
+    "9310": ["Moorsel", "Meldert", "Baardegem", "Herdersem"],   # section de 9300
+    "9255": ["Buggenhout", "Opdorp"],
+    "3050": ["Oud-Heverlee"],
+    "2801": ["Heffen"],   # section de 2800
+    "2800": ["Mechelen", "Malines", "Walem"],
+    "9473": ["Welle"],   # section de 9470
+    "1301": ["Bierges"],   # section de 1300
+    "9320": ["Erembodegem", "Nieuwerkerken"],   # section de 9300
+    "1541": ["Sint-Pieters-Kapelle"],   # section de 1540
+    "3054": ["Vaalbeek"],   # section de 3050
+    "1300": ["Wavre", "Waver", "Limal"],
+    "3052": ["Blanden"],   # section de 3050
+    "3020": ["Herent", "Winksele", "Veltem-Beisem"],
+    "1460": ["Ittre", "Virginal-Samme", "Virginal"],
+    "9280": ["Lebbeke", "Wieze", "Denderbelle"],
+    "2830": ["Willebroek", "Blaasveld", "Heindonk", "Tisselt"],
+    "9402": ["Meerbeke"],   # section de 9400
+    "9403": ["Neigem"],   # section de 9400
+    "2820": ["Bonheiden", "Rijmenam"],
+    "9300": ["Aalst", "Alost"],
+    "3001": ["Heverlee"],   # section de 3000
+    "1342": ["Limelette"],   # section de 1340
+    "9308": ["Hofstade", "Gijzegem"],   # section de 9300
+    "1473": ["Glabais"],   # section de 1470
+    "1341": ["Ceroux-Mousty"],   # section de 1340
+    "3150": ["Haacht", "Wespelaar", "Tildonk"],
+    "3000": ["Leuven", "Louvain"],
+    "1401": ["Baulers"],   # section de 1400
+    "9400": ["Ninove", "Okegem", "Voorde", "Appelterre-Eichem", "Denderwindeke", "Lieferinge", "Nederhasselt", "Aspelare"],
+    "3053": ["Haasrode"],   # section de 3050
+    "1340": ["Ottignies-Louvain-la-Neuve", "Ottignies"],
+    "3012": ["Wilsele"],   # section de 3000
+    "2890": ["Sint-Amands", "Oppuurs", "Lippelo"],   # section de 2870
+    "9450": ["Haaltert", "Denderhoutem", "Heldergem"],
+    "1402": ["Thines"],   # section de 1400
+    "2870": ["Puurs-Sint-Amands", "Puurs", "Breendonk", "Liezele"],
+    "9451": ["Kerksken"],   # section de 9450
+    "1472": ["Vieux-Genappe"],   # section de 1470
+    "1404": ["Bornival"],   # section de 1400
+    "3018": ["Wijgmaal"],   # section de 3000
+    "1540": ["Herne", "Herinnes", "Herfelingen"],
+    "3140": ["Keerbergen"],
+    "1430": ["Rebecq", "Quenast", "Bierghes", "Rebecq-Rognon"],
+    "9401": ["Pollare"],   # section de 9400
+    "2840": ["Rumst", "Terhagen"],
+    "1390": ["Grez-Doiceau", "Archennes", "Bossut-Gottechain", "Biez", "Nethen"],
+    "1474": ["Ways"],   # section de 1470
+    "9200": ["Dendermonde", "Termonde", "Appels", "Baasrode", "Grembergen", "Oudegem", "Schoonaarde", "Sint-Gillis-bij-Dendermonde", "Mespelare"],
+    "9406": ["Outer"],   # section de 9400
+    "2850": ["Boom"],
+    "1348": ["Louvain-la-Neuve"],   # section de 1340
+    "1470": ["Genappe", "Baisy-Thy", "Bousval"],
+    "3010": ["Kessel-Lo"],   # section de 3000
+    "2860": ["Sint-Katelijne-Waver"],
+    "1400": ["Nivelles", "Nijvel", "Monstreux"],
+    "7850": ["Enghien", "Edingen", "Petit-Enghien", "Marcq"],
+    "3110": ["Rotselaar"],
+    "1490": ["Court-Saint-Etienne"],
+    "2861": ["Onze-Lieve-Vrouw-Waver"],   # section de 2860
+    "1471": ["Loupoigne"],   # section de 1470
+    "1570": ["Galmaarden", "Gammerages", "Tollembeek", "Vollezele"],
+    "3360": ["Bierbeek", "Korbeek-Lo", "Lovenjoel"],
+    "9340": ["Lede", "Oordegem", "Wanzele", "Impe", "Smetlede"],
+    "9420": ["Erpe-Mere", "Erpe", "Mere", "Aaigem", "Bambrugge", "Erondegem", "Ottergem", "Vlekkem"],
+    "2845": ["Niel"],
+    "3220": ["Holsbeek", "Sint-Pieters-Rode", "Kortrijk-Dutsel"],
+    "2570": ["Duffel"],
+    "1435": ["Mont-Saint-Guibert", "Corbais", "Hevillers"],
+    "3120": ["Tremelo"],
+    "3118": ["Werchter"],   # section de 3110
+    "7090": ["Braine-le-Comte", "s-Gravenbrakel", "Hennuyeres", "Ronquieres", "Petit-Roeulx-lez-Braine", "Steenkerque"],
+    "3111": ["Wezemaal"],   # section de 3110
+    "1320": ["Beauvechain", "Hamme-Mille", "Tourinnes-la-Grosse", "Nodebais"],
+    "2627": ["Schelle"],
+    "3128": ["Baal"],   # section de 3120
+    "9220": ["Hamme", "Moerzeke"],
+    "1325": ["Chaumont-Gistoux", "Corroy-le-Grand", "Dion-Valmont", "Bonlez", "Longueville"],
+    "9260": ["Wichelen", "Serskamp", "Schellebelle"],
+    "2630": ["Aartselaar"],
+    "1495": ["Villers-la-Ville", "Marbais", "Mellery", "Tilly", "Sart-Dames-Avelines"],
+    "9290": ["Berlare", "Overmere", "Uitbergen"],
+    "2550": ["Kontich", "Waarloos"],
+    "1547": ["Bever", "Bievene"],
+    "9550": ["Herzele", "Hillegem", "Borsbeke", "Ressegem", "Woubrechtegem"],
+    "9240": ["Zele"],
+    "2620": ["Hemiksem"],
+    "7190": ["Ecaussinnes", "Ecaussinnes-d'Enghien", "Ecaussinnes-Lalaing", "Marche-lez-Ecaussinnes"],
+    "1450": ["Chastre", "Blanmont", "Cortil-Noirmont", "Saint-Gery"],
+    "3370": ["Boutersem", "Vertrijk", "Roosbeek"],
+    "9500": ["Geraardsbergen", "Grammont"],
+    "3210": ["Lubbeek", "Linden"],
+    "1457": ["Walhain", "Tourinnes-Saint-Lambert", "Nil-Saint-Vincent"],
 }
 
 CODES_POSTAUX = list(COMMUNES.keys())
@@ -183,6 +284,17 @@ COMMUNE_MERE = {
     "3071": "3070", "3078": "3070",
     "1331": "1330", "1332": "1330",      # Rosieres et Genval font partie de Rixensart
     "3061": "3060",                      # Leefdaal fait partie de Bertem
+    # sections de la troisieme couronne
+    "2811": "2800", "9472": "9470", "1461": "1460", "2812": "2800",
+    "3191": "3190", "3051": "3050", "9310": "9300", "2801": "2800",
+    "9473": "9470", "1301": "1300", "9320": "9300", "1541": "1540",
+    "3054": "3050", "3052": "3050", "9402": "9400", "9403": "9400",
+    "3001": "3000", "1342": "1340", "9308": "9300", "1473": "1470",
+    "1341": "1340", "1401": "1400", "3053": "3050", "3012": "3000",
+    "2890": "2870", "1402": "1400", "9451": "9450", "1472": "1470",
+    "1404": "1400", "3018": "3000", "9401": "9400", "1474": "1470",
+    "9406": "9400", "1348": "1340", "3010": "3000", "2861": "2860",
+    "1471": "1470", "3118": "3110", "3111": "3110", "3128": "3120",
 }
 
 # Appellations trop courtes / ambigues : ne comptent QUE si elles apparaissent
@@ -192,6 +304,11 @@ ALIAS_AMBIGUS = {
     "brussels", "molenbeek", "strombeek",
     # deuxieme couronne : noms qui sont aussi des mots courants
     "berg", "beert", "kester", "lasne", "genval",
+    # troisieme couronne : noms qui sont aussi des mots courants
+    "boom", "muizen", "leest", "heffen", "welle", "lede", "mere",
+    "hever", "baal", "linden", "appels", "duffel", "outer", "ways",
+    "saintes", "walem", "biez", "tilly", "zele", "hamme", "erpe",
+    "limal", "thines", "puurs",
 }
 
 # cp -> (lat, lon) approximatif, pour la commande /rayon
@@ -231,6 +348,41 @@ COORDS = {
     "1703": (50.8394, 4.2094), "1731": (50.8833, 4.2667), "1741": (50.8558, 4.1531),
     "1742": (50.8683, 4.1439), "1981": (50.9928, 4.4642), "1982": (50.9639, 4.5011),
     "3071": (50.8958, 4.5842), "3078": (50.8622, 4.5806),
+    # troisieme couronne (20-35 km)
+    "2811": (51.0100, 4.4370), "9470": (50.8850, 4.0730), "1480": (50.6900, 4.2000),
+    "9472": (50.8730, 4.0550), "1461": (50.6600, 4.2900), "2812": (51.0080, 4.5130),
+    "3191": (51.0000, 4.5350), "3190": (50.9790, 4.5750), "3051": (50.8080, 4.6530),
+    "9310": (50.9500, 4.0900), "9255": (51.0170, 4.2020), "3050": (50.8360, 4.6600),
+    "2801": (51.0370, 4.4230), "2800": (51.0280, 4.4800), "9473": (50.8800, 4.0400),
+    "1301": (50.7120, 4.5850), "9320": (50.9180, 4.0550), "1541": (50.7400, 4.0700),
+    "3054": (50.8340, 4.6800), "1300": (50.7170, 4.6100), "3052": (50.8280, 4.6810),
+    "3020": (50.9060, 4.6710), "1460": (50.6430, 4.2640), "9280": (51.0040, 4.1280),
+    "2830": (51.0600, 4.3600), "9402": (50.8200, 4.0150), "9403": (50.8000, 4.0200),
+    "2820": (51.0230, 4.5470), "9300": (50.9380, 4.0410), "3001": (50.8610, 4.6940),
+    "1342": (50.6800, 4.5750), "9308": (50.9650, 4.0600), "1473": (50.6330, 4.4400),
+    "1341": (50.6600, 4.5400), "3150": (50.9760, 4.6380), "3000": (50.8790, 4.7010),
+    "1401": (50.6220, 4.3400), "9400": (50.8280, 3.9970), "3053": (50.8410, 4.7100),
+    "1340": (50.6650, 4.5670), "3012": (50.9000, 4.7030), "2890": (51.0560, 4.2080),
+    "9450": (50.9050, 4.0000), "1402": (50.6170, 4.3650), "2870": (51.0750, 4.2850),
+    "9451": (50.8900, 3.9900), "1472": (50.6180, 4.4200), "1404": (50.6180, 4.2830),
+    "3018": (50.9250, 4.7000), "1540": (50.7250, 4.0360), "3140": (51.0030, 4.6330),
+    "1430": (50.6580, 4.1250), "9401": (50.8120, 3.9800), "2840": (51.0810, 4.4200),
+    "1390": (50.7400, 4.6900), "1474": (50.6180, 4.4700), "9200": (51.0280, 4.1010),
+    "9406": (50.8450, 3.9700), "2850": (51.0880, 4.3710), "1348": (50.6690, 4.6120),
+    "1470": (50.6100, 4.4510), "3010": (50.8850, 4.7350), "2860": (51.0650, 4.5350),
+    "1400": (50.5980, 4.3280), "7850": (50.6900, 4.0400), "3110": (50.9510, 4.7160),
+    "1490": (50.6330, 4.5680), "2861": (51.0580, 4.5750), "1471": (50.5950, 4.4300),
+    "1570": (50.7550, 3.9700), "3360": (50.8300, 4.7600), "9340": (50.9650, 3.9860),
+    "9420": (50.9260, 3.9600), "2845": (51.1100, 4.3340), "3220": (50.9180, 4.7580),
+    "2570": (51.0960, 4.5080), "1435": (50.6340, 4.6110), "3120": (50.9950, 4.7070),
+    "3118": (50.9600, 4.7400), "7090": (50.6100, 4.1450), "3111": (50.9410, 4.7550),
+    "1320": (50.7800, 4.7700), "2627": (51.1260, 4.3400), "3128": (50.9820, 4.7400),
+    "9220": (51.0960, 4.1350), "1325": (50.6770, 4.7200), "9260": (51.0050, 3.9700),
+    "2630": (51.1340, 4.3850), "1495": (50.5790, 4.5310), "9290": (51.0360, 4.0000),
+    "2550": (51.1320, 4.4500), "1547": (50.7100, 3.9400), "9550": (50.8880, 3.8900),
+    "9240": (51.0660, 4.0400), "2620": (51.1430, 4.3400), "7190": (50.5680, 4.1700),
+    "1450": (50.6080, 4.6430), "3370": (50.8340, 4.8330), "9500": (50.7710, 3.8820),
+    "3210": (50.8830, 4.8390), "1457": (50.6260, 4.7000),
 }
 
 CENTRE_BRUXELLES = (50.8465, 4.3517)  # Grand-Place

@@ -1,7 +1,7 @@
 # Veille viager — Bruxelles et périphérie
 
 Bot personnel qui surveille les annonces de **viager / lijfrente** sur les
-sources belges qui en publient vraiment, filtre sur Bruxelles + 20 km, mémorise
+sources belges qui en publient vraiment, filtre sur Bruxelles + 35 km, mémorise
 ce qu'il a déjà vu, et envoie les nouveautés sur Telegram. Il tourne 2 fois par
 jour sur GitHub Actions.
 
@@ -169,13 +169,15 @@ ta commande et sa confirmation. Pour aller plus vite : `Actions` →
 
 ### Filtre géographique
 
-La zone couvre **92 codes postaux** : les 19 communes de Bruxelles-Capitale,
-la première couronne, et la deuxième couronne jusqu'à 20 km de la Grand-Place
-(Waterloo, Braine-l'Alleud, La Hulpe, Rixensart, Lasne, Braine-le-Château côté
-wallon ; Roosdaal, Gooik, Pepingen, Liedekerke, Affligem, Opwijk, Londerzeel,
-Kapelle-op-den-Bos, Kampenhout, Huldenberg, Bertem, Leefdaal côté flamand).
-Tubize est à 20,4 km, donc juste dehors : une ligne dans `config.py` suffit à
-l'ajouter. `/rayon 15` ramène la zone à 66 communes, `/rayon 10` à 40.
+La zone couvre **193 codes postaux**, en trois couronnes autour de la
+Grand-Place : Bruxelles-Capitale et la première périphérie, la deuxième
+couronne jusqu'à 20 km (Waterloo, Braine-l'Alleud, La Hulpe, Dilbeek,
+Grimbergen…), et la troisième jusqu'à 35 km — Louvain/Leuven, Malines/Mechelen,
+Alost/Aalst, Termonde, Ninove, Grammont, Enghien, Braine-le-Comte, Nivelles,
+Genappe, Villers-la-Ville, Ottignies-Louvain-la-Neuve, Wavre, ainsi que la rive
+du Rupel (Boom, Willebroek, Puurs). Chaque commune est déclarée avec ses
+appellations FR et NL et ses anciennes sections.
+`/rayon 20` ramène la zone à 93 communes, `/rayon 15` à 66, `/rayon 10` à 40.
 
 Beaucoup de sites d'agences n'affichent que le nom de la commune, sans code
 postal. Le matching fonctionne donc des deux façons, avec ces précautions :
