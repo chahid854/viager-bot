@@ -175,6 +175,22 @@ ok, av = F.evaluer(incomplet, {"surface_min": 120, "chambres_min": 3})
 verifie("donnee absente ne rejette pas", ok)
 verifie("avertissements produits", len(av) >= 2, str(av))
 
+print("\n== Annonces de demande (acheteurs qui cherchent) ==")
+verifie("cherche FR rejetee", parsing.est_demande("Cherche viager occupe Bruxelles"))
+verifie("acheteur recherche rejetee",
+        parsing.est_demande("ACHETEUR RECHERCHE MAISON EN VIAGER - BELGIQUE"))
+verifie("gezocht NL rejetee", parsing.est_demande("Gezocht: huis op lijfrente"))
+verifie("wij zoeken rejetee",
+        parsing.est_demande("Lijfrente", "Wij zoeken woningen op lijfrente"))
+verifie("te koop gevraagd rejetee",
+        parsing.est_demande("Te koop gevraagd: woning op lijfrente"))
+verifie("vraie annonce passe",
+        not parsing.est_demande("Maison en viager occupe a Uccle", "Belle maison 3 chambres"))
+verifie("marketing 'vous cherchez' passe", not parsing.est_demande(
+    "Superbe appartement viager", "Vous cherchez un viager ? Voici une occasion"))
+verifie("titre 'Recherche du confort ?' passe", not parsing.est_demande(
+    "Recherche du confort ? Ce viager libre est pour vous"))
+
 print("\n== Mise en forme ==")
 import notifier
 msg = notifier.formater(bien, ["⚠️ surface inconnue"])

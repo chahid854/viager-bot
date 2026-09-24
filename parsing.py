@@ -232,6 +232,25 @@ VENDU = re.compile(
 # texte de l'annonce voisine, dont le statut n'a rien a voir.
 FENETRE_VENDU = 60
 
+# Annonces de DEMANDE : un acheteur ou une agence qui CHERCHE un viager, pas
+# un bien a vendre. Frequent sur 2ememain/2dehands, en FR comme en NL.
+# On ne matche que la premiere personne ("je cherche", "wij zoeken") ou les
+# tournures d'annonce ("Gezocht:", "Cherche...", "Te koop gevraagd") : le
+# "Vous cherchez un viager ?" marketing des vraies annonces ne compte pas.
+DEMANDE = re.compile(
+    r"^\s*(?:re)?cherch\w*\b(?!\s+(?:du|de\s+la|votre|uw)\b)"
+    r"|^\s*ach[eè]t\w*\b"
+    r"|\b(?:je|nous|on|ik|wij)\s+(?:(?:re)?cherch\w*|zoek\w*|ko(?:op|pen)|achet\w*)\b"
+    r"|\bgezocht\b|\bte\s+koop\s+gevraagd\b|\bgevraagd\b"
+    r"|\blooking\s+for\b|\bwanted\b", re.I)
+
+
+def est_demande(titre, texte="", fenetre=80):
+    """L'annonce est-elle une recherche d'acheteur plutot qu'un bien a vendre ?"""
+    if DEMANDE.search(titre or ""):
+        return True
+    return bool(DEMANDE.search((texte or "")[:fenetre]))
+
 
 def est_vendu(titre, texte="", fenetre=FENETRE_VENDU):
     """Le bien est-il deja vendu ? Beaucoup d'agences les gardent en vitrine.

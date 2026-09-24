@@ -81,6 +81,9 @@ def retenir(annonce, zone_cps):
     if parsing.est_vendu(annonce.titre, annonce.description):
         log.debug("[%s] deja vendu, ignore : %s", annonce.source, annonce.titre[:60])
         return False
+    if parsing.est_demande(annonce.titre, annonce.description):
+        log.debug("[%s] annonce de recherche, ignoree : %s", annonce.source, annonce.titre[:60])
+        return False
     garde, cp, commune, avert = geo.resoudre(annonce, zone_cps)
     if cp:
         annonce.code_postal = cp
@@ -242,9 +245,11 @@ def purger_vendus(bdd, dry_run=False):
     supprimes = []
     for r in bdd.toutes():
         if parsing.est_vendu(r["titre"] or "", r["description"] or ""):
-            supprimes.append((r["id_hash"], (r["titre"] or "")[:70]))
-    for id_hash, titre in supprimes:
-        print("  vendu  %s" % titre)
+            supprimes.append((r["id_hash"], "vendu    ", (r["titre"] or "")[:70]))
+        elif parsing.est_demande(r["titre"] or "", r["description"] or ""):
+            supprimes.append((r["id_hash"], "recherche", (r["titre"] or "")[:70]))
+    for id_hash, motif, titre in supprimes:
+        print("  %s %s" % (motif, titre))
         if not dry_run:
             bdd.supprimer(id_hash)
     return len(supprimes)
