@@ -498,6 +498,17 @@ SOURCES = [
     {"name": "notarishuis-antwerpen", "module": "generic", "enabled": True, "kind": "portail",
      "urls": ["https://www.notarishuis.eu/nl/te-koop/?page={page}"], "pages": 2},  # Malines, Rupel
 
+    # ---- Agences reperees par la decouverte automatique (Immoweb) ----------
+    # VIAH! : page "nos biens" sans aucun lien d'annonce (vitrine texte) ;
+    # leurs biens passent par Immoweb, deja capte. Pas de source dediee.
+    {"name": "homeselect", "module": "generic", "enabled": True, "kind": "agence",
+     "urls": ["https://www.homeselect.be/nl/", "https://www.homeselect.be/fr/"],
+     "lien_re": r"/pand/|/bien/", "tout_viager": False},   # /pand/lijfrente-verkoop/... dans l'URL
+    {"name": "burima", "module": "generic", "enabled": True, "kind": "portail",
+     "urls": ["https://www.burima.be/immobiliers/biens-a-vendre/"]},
+    {"name": "immopicke", "module": "generic", "enabled": True, "kind": "portail",
+     "urls": ["https://www.immopicke.be/fr/a-vendre", "https://www.immopicke.be/nl/te-koop"]},
+
     # -------------------------------------- D. agences viager (FR) ----------
     {"name": "viagerbel", "module": "generic", "enabled": True, "kind": "agence",
      "urls": ["https://www.viagerbel.be/biens/", "https://www.viagerbel.be/biens/page/{page}/"],

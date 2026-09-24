@@ -5,7 +5,7 @@ sources belges qui en publient vraiment, filtre sur Bruxelles + 35 km, mémorise
 ce qu'il a déjà vu, et envoie les nouveautés sur Telegram. Il tourne 2 fois par
 jour sur GitHub Actions.
 
-41 sources sont déclarées, **12 sont actives** : les autres sont éteintes avec
+49 sources sont déclarées, **20 sont actives** : les autres sont éteintes avec
 la raison en commentaire dans `config.py` (domaine mort, pas de filtre viager,
 catalogue en JavaScript…). Voir le §4, qui détaille chaque cas.
 
