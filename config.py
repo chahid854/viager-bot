@@ -478,9 +478,13 @@ SOURCES = [
     # absent de l'interface visible. National : notre filtre geo fait le tri.
     # Les notaires y publient des viagers de succession/gre a gre qui
     # n'atteignent jamais Immoweb.
+    # lien_re obligatoire : les liens de navigation du portail ("biens a
+    # vendre dans la province de...") ressemblent a des annonces et passaient
+    # pour des biens situes "a Bruxelles". Une vraie fiche a la forme
+    # /fr/<titre>/a-vendre/<adresse>/<id>.
     {"name": "notaire.be", "module": "generic", "enabled": True, "kind": "agence",
      "urls": ["https://immo.notaire.be/fr/biens-a-vendre?sale_type_accurate=A&page={page}"],
-     "pages": 3},
+     "pages": 3, "lien_re": r"/a-vendre/.+/\d+"},
     # NVN = vitrine immobiliere des notaires bruxellois. Pas de filtre viager :
     # on garde le tri par mot-cle (tout_viager=False via kind portail).
     {"name": "nvn", "module": "generic", "enabled": True, "kind": "portail",
