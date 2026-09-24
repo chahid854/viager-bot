@@ -65,20 +65,39 @@ def rente(texte):
     """Rente mensuelle. Cherche un montant lie a rente/lijfrente ou suivi de /mois."""
     if not texte:
         return None
+    # Une annee de construction ("Construction 1955", "Bouwjaar 1962") tombe
+    # dans la plage d'une rente et se retrouve souvent a cote du mot "Rente"
+    # dans les fiches structurees : on efface ces segments avant de chercher.
+    texte = re.sub(r"(?:construction|bouwjaar|gebouwd\s+in|anno|annee|renove\s+en|"
+                   r"renovation|gerenoveerd\s+in)\W{0,8}(?:19|20)\d{2}",
+                   " ", texte, flags=re.I)
+    # Forme etiquetee des fiches structurees : "Valeur rente 970 EUR",
+    # "Rente mensuelle : 850", "Maandelijkse lijfrente 700". Le montant doit
+    # suivre l'etiquette de pres, ce qui ecarte le revenu cadastral voisin et
+    # permet les rentes a trois chiffres, invisibles du detecteur generique.
     m = re.search(
-        r"(\d{1,3}(?:[.\s ]\d{3})*|\d{3,6})\s*(?:€|eur|euros?)?\s*"
+        r"(?:valeur\s+rente|rente\s+viag\w*|rente\s+mensuelle|rente\s+index\w*|"
+        r"maandelijkse\s+(?:lijf|leef)?rente|lijfrente|rente)\W{1,15}"
+        r"(\d{1,3}(?:[.\s]\d{3})+|\d{2,5})\s*(?:€|eur)",
+        texte, re.I,
+    )
+    if m:
+        v = int(re.sub(r"[.\s ]", "", m.group(1)))
+        if 50 <= v <= 20000:
+            return v
+    m = re.search(
+        r"(\d{1,3}(?:[.\s ]\d{3})*|\d{3,6})\s*(?:€|eur|euros?)?\s*"
         r"(?:/|par |pe?r |p/)\s*(mois|maand|month|mnd)",
         texte, re.I,
     )
     if m:
-        v = int(re.sub(r"[.\s ]", "", m.group(1)))
+        v = int(re.sub(r"[.\s ]", "", m.group(1)))
         if 50 <= v <= 20000:
             return v
     v = _montant_pres_de(texte, [r"rente\s*viag", r"rente\s*mensuelle", r"lijfrente",
                                  r"maandelijkse\s*rente", r"\brente\b"],
                          mini=50, maxi=20000, fenetre=60)
     return v
-
 
 def prix(texte):
     """Prix affiche / valeur venale. Ecarte les montants deja lus comme rente."""
@@ -108,7 +127,9 @@ def chambres(texte):
     return None
 
 
-_M2 = r"(\d{2,5})\s*(?:m²|m2|m\^2|\bm\b)"
+# "118m 2" colle sans espace existe dans les fiches structurees : le m final
+# accepte donc d'etre soude au nombre.
+_M2 = r"(\d{2,5})\s*(?:m²|m2|m\^2|m\b)"
 
 
 def surface(texte):
@@ -298,8 +319,10 @@ def completer(annonce, mots_cles):
         annonce.peb = peb(txt)
     if annonce.type_bien is None:
         annonce.type_bien = type_bien(txt)
-    if annonce.type_viager is None:
-        annonce.type_viager = type_viager(txt)
+    if annonce.type_viager in (None, "inconnu"):
+        # "inconnu" se reevalue aussi : la fiche detaillee, lue apres la carte,
+        # precise souvent occupe/libre la ou la liste ne le disait pas.
+        annonce.type_viager = type_viager(txt) or annonce.type_viager
     if annonce.jardin is None:
         annonce.jardin = jardin(txt)
     if annonce.garage is None:
