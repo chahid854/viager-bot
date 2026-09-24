@@ -320,6 +320,20 @@ SOURCES = [
     {"name": "immosearch", "module": "generic", "enabled": False, "kind": "agregateur",
      "urls": ["https://www.immosearch.be/fr/recherche?q=viager"]},
 
+    # --------------------------- Notaires (souvent AVANT les portails) ------
+    # immo.notaire.be = portail officiel des ventes notariales (Fednot). Le
+    # formulaire cache un vrai filtre "Vente en viager" (sale_type_accurate=A),
+    # absent de l'interface visible. National : notre filtre geo fait le tri.
+    # Les notaires y publient des viagers de succession/gre a gre qui
+    # n'atteignent jamais Immoweb.
+    {"name": "notaire.be", "module": "generic", "enabled": True, "kind": "agence",
+     "urls": ["https://immo.notaire.be/fr/biens-a-vendre?sale_type_accurate=A&page={page}"],
+     "pages": 3},
+    # NVN = vitrine immobiliere des notaires bruxellois. Pas de filtre viager :
+    # on garde le tri par mot-cle (tout_viager=False via kind portail).
+    {"name": "nvn", "module": "generic", "enabled": True, "kind": "portail",
+     "urls": ["https://nvn.be/immobilier"]},
+
     # -------------------------------------- D. agences viager (FR) ----------
     {"name": "viagerbel", "module": "generic", "enabled": True, "kind": "agence",
      "urls": ["https://www.viagerbel.be/biens/", "https://www.viagerbel.be/biens/page/{page}/"],
